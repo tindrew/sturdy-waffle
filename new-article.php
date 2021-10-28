@@ -1,11 +1,47 @@
 <?php
 
-if($_SERVER["REQUEST_METHOD"] == "POST") {
+require 'includes/database.php';
 
-  var_dump($_POST);
+$errors = [];
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    if ($_POST['title'] == '') {
+        $errors[] = 'Title is required';
+    }
+    if ($_POST['content'] == '') {
+        $errors[] = 'Content is required';
+    }
+
+    if (empty($errors)) {
+
+        $conn = getDB();
+
+        $sql = "INSERT INTO article (title, content, published_at) VALUES (?, ?, ?)";
+
+        $stmt = mysqli_prepare($conn, $sql);
+
+        if ($stmt === false) {
+
+            echo mysqli_error($conn);
+
+        } else {
+
+            mysqli_stmt_bind_param($stmt, "sss", $_POST['title'], $_POST['content'], $_POST['published_at']);
+
+            if (mysqli_stmt_execute($stmt)) {
+
+                $id = mysqli_insert_id($conn);
+                echo "Inserted record with ID: $id";
+
+            } else {
+
+                echo mysqli_stmt_error($stmt);
+
+            }
+        }
+    }
 }
-
 ?>
 
 
@@ -29,7 +65,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div>
       <label for="published_at">Publication date and time</label>
-      <input type="text" name="published_at" id="published_at">
+      <input type="datetime" name="published_at" id="published_at">
     </div>
 
     <button>Add</button>

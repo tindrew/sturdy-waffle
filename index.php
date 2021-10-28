@@ -1,6 +1,9 @@
 <?php
 
-include 'includes/database.php';
+require 'includes/database.php';
+
+$conn = getDB();
+
 
 $sql = "SELECT * 
         FROM article
