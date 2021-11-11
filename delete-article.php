@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
 
 require 'includes/init.php';
 
@@ -22,23 +19,23 @@ if (isset($_GET['id'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $article->title = $_POST['title'];
-    $article->content = $_POST['content'];
-    $article->published_at = $_POST['published_at'];
+    if ($article->delete($conn)) {
 
-     if ($article->update($conn)) {
+      Url::redirect("/index.php");
 
-         Url::redirect("/article.php?id={$article->id}");
-
-     }
- }
-
+   }
+}
 
 ?>
+
 <?php require 'includes/header.php'; ?>
 
-<h2>Edit article</h2>
+<h2>Delete article</h2>
 
-<?php require 'includes/article-form.php'; ?>
+<form method="post">
+  <p>Are you sure?</p>
+    <button>Delete</button>
+      <a href="article.php?id=<?= $article->id; ?>">Cancel</a>
+</form>
 
 <?php require 'includes/footer.php'; ?>
